@@ -1,3 +1,4 @@
 DB_HOST: db.masterdevops.store
 app_location: /app 
 component: backend
+mysql_root_password: ExpenseApp@1
