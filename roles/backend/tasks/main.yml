@@ -17,10 +17,12 @@
   ansible.builtin.import_role:
     name: common 
     tasks_from: app-pre-req
+
+
 - name: downloading dependencies
   ansible.builtin.command: npm install 
   args:
-    chdir: /app      
+    chdir: /app     
 
 - name: setting up the systemd services
   ansible.builtin.template:
