@@ -15,7 +15,7 @@
     tasks_from: app-pre-req
 
 - name: setting up the systemd services
-  ansible.builtin.templates:
+  ansible.builtin.template:
     src: expense.conf.j2
     dest: /etc/nginx/default.d/expense.conf
   notify:
