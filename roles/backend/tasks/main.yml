@@ -1,0 +1,59 @@
+- name: disabling nodejs 20
+  ansible.builtin.command: dnf module disable nodejs -y
+
+- name: enabling nodejs20
+  ansible.builtin.command: dnf module enable nodejs:20 -y
+
+- name: installing nodejs 
+  ansible.builtin.dnf:
+    name: nodejs
+    state: latest
+
+- name: creating a user 
+  ansible.builtin.user:
+    name: expense 
+
+- name: getting the app pre req
+  ansible.builtin.import_role:
+    name: common 
+    tasks_from: app-pre-req
+- name: downloading dependencies
+  ansible.builtin.command: npm install 
+  args:
+    chdir: /app      
+
+- name: setting up the systemd services
+  ansible.builtin.template:
+    src: backend.service.j2
+    dest: /etc/systemd/system/backend.service
+
+- name: installing python dependencies
+  ansible.builtin.pip:
+    name:
+    - MyPySQL
+    - cryptography
+    executable: pip3.9
+
+- name: installing mysql client 
+  ansible.builtin.dnf:
+    name: mysql
+    state: latest
+
+- name: loading the schema into database
+  community.mysql.mysql_db:
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+    login_host: db.masterdevops.store
+    name: all 
+    state: import
+    target: /app/schema/backend.sql  
+
+- name: daemon reload
+  ansible.builtin.systemd_service:
+    daemon_reload: true
+
+- name: start and enable backend
+  ansible.builtin.service:
+      name: backend
+      state: started
+      enabled: yes 

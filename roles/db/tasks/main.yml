@@ -1,0 +1,33 @@
+  - name: installing mysql server
+    ansible.builtin.dnf: 
+      name: mysql-server
+      state: latest
+
+  - name: start and enable mysql server
+    ansible.builtin.service:
+      name: mysqld
+      state: started
+      enabled: true
+
+  - name: installing python dependencies
+    ansible.builtin.pip:
+      name:
+      - MyPySQL
+      - cryptography
+      executable: pip3.9
+
+  - name: checking mysql credentials
+    community.mysql.mysql_info:
+      login_user: root
+      login_password: "{{ mysql_root_password }}"
+      login_host: db.masterdevops.store
+    ignore_errors: true
+    register: mysql_passwordcheck
+
+  - name: print ouput
+    ansible.builtin.debug:
+      msg: "output: {{mysql_passwordcheck}}"
+
+  - name: setting the root password
+    ansible.builtin.command: mysql_secure_installation --set-root-pass {{mysql_root_password}}
+    when: mysql_passwordcheck.failed is true

@@ -1,0 +1,3 @@
+DB_HOST: db.masterdevops.store
+app_location: /app 
+component: backend

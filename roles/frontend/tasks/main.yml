@@ -1,0 +1,28 @@
+- name: installing nginx 
+  ansible.builtin.dnf:
+    name: nginx
+    state: latest
+
+- name: starting and enabling nginx server
+  ansible.builtin.service:
+    name: nginx
+    state: started
+    enabled: yes
+
+- name: getting the app pre req
+  ansible.builtin.import_role:
+    name: common 
+    tasks_from: app-pre-req
+
+
+- name: setting up the systemd services
+  ansible.builtin.templates:
+    src: expense.conf.j2
+    dest: /etc/nginx/default.d/expense.conf
+  notify:
+    - restart nginx
+
+# - name: restart nginx
+#   ansible.builtin.service:
+#     name: nginx
+#     state: restarted    
