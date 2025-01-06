@@ -19,7 +19,7 @@
     src: expense.conf.j2
     dest: /etc/nginx/default.d/expense.conf
   notify:
-    - restart nginx
+  - restart nginx
 
 # - name: restart nginx
 #   ansible.builtin.service:
